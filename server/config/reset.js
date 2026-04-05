@@ -32,6 +32,70 @@ const createTripsTable = async () => {
     }
 }
 
+const createDestinationsTable = async () => {
+    const createDestinationsTableQuery = `
+        DROP TABLE IF EXISTS destinations;
+
+        CREATE TABLE IF NOT EXISTS destinations (
+            id SERIAL PRIMARY KEY,
+            destination VARCHAR(500) NOT NULL,
+            description VARCHAR(100) NOT NULL,
+            country VARCHAR(100) NOT NULL,
+            img_url TEXT NOT NULL,
+            flag_img_url TEXT NOT NULL
+        )
+    `
+
+    try {
+        const res = await pool.query(createDestinationsTableQuery)
+        console.log('🎉 destinations table created successfully!')
+    } catch (err) {
+        console.error(`⚠️ Error creating destinations table \n${err}`)
+    }
+}
+
+const createActivitiesTable = async () => {
+    const createActivitiesTableQuery = `
+        DROP TABLE IF EXISTS activities;
+
+        CREATE TABLE IF NOT EXISTS destinations (
+            id SERIAL PRIMARY KEY,
+            trip_id INT NOT NULL,
+            activity VARCHAR(100) NOT NULL,
+            num_votes INT DEFAULT 0,
+            FOREIGN KEY (trip_id) REFERENCES trips(id)
+        )
+    `
+
+    try {
+        const res = await pool.query(createActivitiesTableQuery)
+        console.log('🎉 activities table created successfully!')
+    } catch (err) {
+        console.error(`⚠️ Error creating destinations table \n${err}`)
+    }
+
+}
+
+const createTripsDestinationTable = async () => {
+    const createTripsDestinationTableQuery = `
+        DROP TABLE IF EXISTS trips_destinations;
+
+        CREATE TABLE IF NOT EXISTS trips_destinations(
+            trip_id INT PRIMARY KEY,
+            destination_id INT PRIMARY KEY
+            FOREIGN KEY trip_id REFERENCES trips(id)
+            FOREIGN KEY destination_id REFERENCES destinations(id)
+        )
+    `
+
+    try {
+        const res = await pool.query(createTripsDestinationTableQuery)
+        console.log('🎉 activities table created successfully!')
+    } catch (err) {
+
+    }
+}
+
 const seedTripsTable = async() => {
     await createTripsTable()
 
@@ -63,3 +127,5 @@ const seedTripsTable = async() => {
 }
 
 seedTripsTable()
+createDestinationsTable()
+createActivitiesTable()
