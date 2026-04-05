@@ -10,7 +10,7 @@ const tripsData = JSON.parse(tripsFile)
 
 const createTripsTable = async () => {
     const createTripsTableQuery = `
-        DROP TABLE IF EXISTS trips;
+        DROP TABLE IF EXISTS trips CASCADE;
 
         CREATE TABLE IF NOT EXISTS trips(
             id SERIAL PRIMARY KEY,
@@ -34,7 +34,7 @@ const createTripsTable = async () => {
 
 const createDestinationsTable = async () => {
     const createDestinationsTableQuery = `
-        DROP TABLE IF EXISTS destinations;
+        DROP TABLE IF EXISTS destinations CASCADE;
 
         CREATE TABLE IF NOT EXISTS destinations (
             id SERIAL PRIMARY KEY,
@@ -58,7 +58,7 @@ const createActivitiesTable = async () => {
     const createActivitiesTableQuery = `
         DROP TABLE IF EXISTS activities;
 
-        CREATE TABLE IF NOT EXISTS destinations (
+        CREATE TABLE IF NOT EXISTS activities (
             id SERIAL PRIMARY KEY,
             trip_id INT NOT NULL,
             activity VARCHAR(100) NOT NULL,
@@ -80,19 +80,60 @@ const createTripsDestinationTable = async () => {
     const createTripsDestinationTableQuery = `
         DROP TABLE IF EXISTS trips_destinations;
 
-        CREATE TABLE IF NOT EXISTS trips_destinations(
-            trip_id INT PRIMARY KEY,
-            destination_id INT PRIMARY KEY
-            FOREIGN KEY trip_id REFERENCES trips(id)
-            FOREIGN KEY destination_id REFERENCES destinations(id)
+        CREATE TABLE IF NOT EXISTS trips_destinations (
+            trip_id INT NOT NULL,
+            destination_id INT NOT NULL,
+            PRIMARY KEY (trip_id, destination_id),
+            FOREIGN KEY (trip_id) REFERENCES trips(id),
+            FOREIGN KEY (destination_id) REFERENCES destinations(id)
         )
     `
 
     try {
         const res = await pool.query(createTripsDestinationTableQuery)
-        console.log('🎉 activities table created successfully!')
+        console.log('🎉 trips_destination table created successfully!')
     } catch (err) {
+        console.error(`⚠️ error creating trips_destination table ${err}`)
+    }
+}
 
+const createUserTables = async () => {
+    const createUserTablesQuery = `
+        DROP TABLE IF EXISTS users CASCADE;
+
+        CREATE TABLE IF NOT EXISTS users (
+            id SERIAL PRIMARY KEY,
+            githubid INT NOT NULL,
+            username VARCHAR(100) NOT NULL,
+            avatarurl VARCHAR(500) NOT NULL,
+            accesstoken VARCHAR(500) NOT NULL
+        )
+    `
+
+    try {
+        const res = pool.query(createUserTablesQuery)
+        console.log('🎉 users table created successfully!')
+    } catch(err) {
+        console.error(`⚠️ error creating users table ${err}`)
+    }
+}
+
+const createTripsUsersTable = async () => {
+    const createTripsUsersTableQuery = `
+        CREATE TABLE IF NOT EXISTS trips_users (
+            trip_id INT NOT NULL,
+            user_id INT NOT NULL,
+            PRIMARY KEY (trip_id, user_id),
+            FOREIGN KEY (trip_id) REFERENCES trips(id) ON UPDATE CASCADE,
+            FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE
+        )
+    `
+
+    try {
+        const res = pool.query(createTripsUsersTableQuery)
+        console.log('🎉 trips_users table created successfully!')
+    } catch(err) {
+        console.error(`⚠️ error creating trips_user table ${err}`)
     }
 }
 
@@ -126,6 +167,13 @@ const seedTripsTable = async() => {
     })
 }
 
-seedTripsTable()
-createDestinationsTable()
-createActivitiesTable()
+const main = async () => {
+    await seedTripsTable()
+    await createDestinationsTable()
+    await createActivitiesTable()
+    await createTripsDestinationTable()
+    await createUserTables()
+    await createTripsUsersTable()
+}
+
+main()
