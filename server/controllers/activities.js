@@ -3,7 +3,8 @@ import { pool } from "../config/database.js";
 const createActivity = async(req, res) => {
     try {
 
-        const {trip_id, activity, num_votes} = req.body
+        const trip_id = parseInt(req.params.trip_id)
+        const {activity, num_votes} = req.body
 
         const insertQuery = `
             INSERT INTO activities (trip_id, activity, num_votes)
