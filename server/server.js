@@ -19,10 +19,10 @@ app.get('/', (req, res) => {
 })
 
 
-app.use('/trips', tripRoutes)
-app.use('/activities', activitiesRoutes)
-app.use('/destinations', destinationsRoutes)
-app.use('/trips-destinations', tripsDestinationsRoutes)
+app.use('/api/trips', tripRoutes)
+app.use('/api/activities', activitiesRoutes)
+app.use('/api/destinations', destinationsRoutes)
+app.use('/api/trips-destinations', tripsDestinationsRoutes)
 
 const PORT = process.env.PORT || 3001
 
