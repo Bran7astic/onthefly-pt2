@@ -27,14 +27,29 @@ const EditTrip = ({data}) => {
     const updatePost = (event) => {
         event.preventDefault();
 
+        const options = {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(post)
+        }
 
-
+        console.log(id)
+        fetch(`/api/trips/${id}`, options)
+        window.location.href = '/'
     }
 
 
     const deletePost = (event) => {
         event.preventDefault();
 
+        const options = {
+            method: 'DELETE'
+        }
+
+        fetch(`/api/trips/${id}`, options)
+        window.location.href = '/'
         
     }
 
