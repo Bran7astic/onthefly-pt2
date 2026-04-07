@@ -4,7 +4,7 @@ import './CreateActivity.css'
 
 const CreateActivity = () => {
 
-    const [activity, setActivity] = useState({activity: "" })
+    const [activity, setActivity] = useState({activity: "", num_votes: 0})
     const {trip_id} = useParams();
 
 
@@ -30,7 +30,7 @@ const CreateActivity = () => {
         }
 
         await fetch(`/api/activities/${trip_id}`, options)
-        //window.location.href = '/'
+        window.location.href = '/'
 
     }
 
